@@ -1,0 +1,4 @@
+tk
+ccxt
+matplotlib
+pandas
