@@ -1,16 +1,31 @@
 import tkinter as tk
 import data_processing
+from time import sleep
 
 bgColor = "#161618"
 logoBarColor = "#FF9900"
+
+
+def toggle(element, side, expand=False, fill=None, padx=0, pady=0):
+    if element.winfo_ismapped():
+        element.pack_forget()
+    else:
+        element.pack(side=side, expand=expand, fill=fill, padx=padx, pady=pady)
+
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.geometry("1440x1024+250+20")
         self.configure(bg=bgColor)
-        #self.overrideredirect(True)
+        # self.overrideredirect(True)
         self.resizable(False, False)
+
+        try:
+            from ctypes import windll
+            windll.shcore.SetProcessDpiAwareness(1)
+        except Exception as e:
+            print(e)
 
         # Nav bar
         self.nav_bar = tk.Frame(background=logoBarColor, height=100)
@@ -47,8 +62,7 @@ class App(tk.Tk):
                                          command=lambda: data_processing.DataProcessing.trend_line(self.cckbtn.get()))
         self.trend_line.pack(side="right", padx=10, pady=10)
 
-
-        # # # Another frame idk what for yet
+        # # # Another frame I don't know what for yet
         self.bottom_frame = tk.Frame(self.plot_frame, background=bgColor, width=100, height=100, highlightthickness=1,
                                      highlightbackground="blue")
         self.bottom_frame.pack(side="bottom", expand=True, fill="both")
@@ -79,27 +93,22 @@ class App(tk.Tk):
 
         self.run = tk.Button(self.settings_bar, text="Analyze!", background="#1DAF1A", foreground="white",
                              height=5,
-                             command=lambda: self.run_analysis(self.stock_var.get(), self.symbol_var.get()))
+                             command=self.run_analysis)
         self.run.pack(side="bottom", fill="x")
 
-    def toggle(self, element, side, expand=False, fill=None, padx=0, pady=0):
-        if element.winfo_ismapped():
-            element.pack_forget()
-        else:
-            element.pack(side=side, expand=expand, fill=fill, padx=padx, pady=pady)
-
     def toggle_settings_bar(self):
-        self.toggle(self.settings_bar, "left", False, "y", 10, 10)
+        toggle(self.settings_bar, "left", False, "y", 10, 10)
 
     def analysis_action(self):
-        self.toggle(self.analysis_tools_frame, "right", True, "both", 0, 0)
+        toggle(self.analysis_tools_frame, "right", True, "both", 0, 0)
 
-    def run_analysis(self, stock, symbol):
-        if not hasattr(self, 'chart'):
-            self.chart = data_processing.DataProcessing(self.plot_frame, stock, symbol)
-        else:
+    def run_analysis(self):
+        stock = self.stock_var.get()
+        symbol = self.symbol_var.get()
+        if hasattr(self, 'chart'):
             self.chart.clear_chart()
-            self.chart = data_processing.DataProcessing(self.plot_frame, stock, symbol)
+            sleep(10)
+        self.chart = data_processing.DataProcessing(self.plot_frame, stock, symbol)
 
 
 if __name__ == '__main__':

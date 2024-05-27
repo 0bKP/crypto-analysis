@@ -18,7 +18,7 @@ class DataProcessing:
         elif state == 0:
             print("No trend line:(")
 
-    def __init__(self, frame, stock, symbol, timeframe="1m", limit=20, update_interval=1):
+    def __init__(self, frame, stock, symbol, timeframe="1m", limit=20, update_interval=60):
         self.frame = frame
         self.stock = stock
         self.symbol = symbol
@@ -32,7 +32,7 @@ class DataProcessing:
         self.fig, self.ax = plt.subplots(figsize=(10, 5))
         self.fig.patch.set_facecolor("#161618")
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.frame)
-        self.canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.canvas.get_tk_widget().pack(side="top", fill="both", expand=True)
 
         # Uruchomienie wątku do aktualizacji wykresu
         self.running = True
@@ -41,11 +41,15 @@ class DataProcessing:
         self.thread.start()
 
     def fetch_data(self):
-        ohlcv = self.binance.fetch_ohlcv(self.symbol, self.timeframe, limit=self.limit)
-        df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-        df['timestamp'] = df['timestamp'].dt.tz_localize('UTC').dt.tz_convert('Europe/Warsaw')
-        return df
+        try:
+            ohlcv = self.binance.fetch_ohlcv(self.symbol, self.timeframe, limit=self.limit)
+            df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+            df['timestamp'] = df['timestamp'].dt.tz_localize('UTC').dt.tz_convert('Europe/Warsaw')
+            return df
+        except Exception as e:
+            print(f"Error fetching data: {e}")
+            return pd.DataFrame()
 
     # Funkcja do aktualizacji wykresu
     def update_plot(self):
@@ -55,7 +59,7 @@ class DataProcessing:
             self.ax.tick_params(axis='x', colors=plot_text_color)
             self.ax.tick_params(axis='y', colors=plot_text_color)
             self.ax.set_xlabel(self.today, color=plot_text_color)
-            #self.ax.set_ylabel('Cena (USD)', color=plot_text_color)
+            # self.ax.set_ylabel('Cena (USD)', color=plot_text_color)
             self.ax.set_facecolor("#161618")
             self.ax.set_title(self.symbol, color=plot_text_color)
             self.ax.grid(True, color="#262629")
