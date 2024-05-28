@@ -59,7 +59,7 @@ class App(tk.Tk):
         self.cckbtn = tk.IntVar()
         self.trend_line = tk.Checkbutton(self.analysis_tools_frame, text="Trend line", variable=self.cckbtn,
                                          onvalue=1, offvalue=0,
-                                         command=lambda: data_processing.DataProcessing.trend_line(self.cckbtn.get()))
+                                         command=self.enable_trend_line)
         self.trend_line.pack(side="right", padx=10, pady=10)
 
         # # # Another frame I don't know what for yet
@@ -109,6 +109,12 @@ class App(tk.Tk):
             self.chart.clear_chart()
             sleep(10)
         self.chart = data_processing.DataProcessing(self.plot_frame, stock, symbol)
+
+    def enable_trend_line(self):
+        if self.cckbtn.get() == 1:
+            self.chart.trend_line_enabled = True
+        else:
+            self.chart.trend_line_enabled = False
 
 
 if __name__ == '__main__':

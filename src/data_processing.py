@@ -6,17 +6,17 @@ from datetime import datetime
 import tkinter as tk
 from threading import Thread
 import time
+import data_analysis
 
 plot_text_color = "#BCBCBC"
 
 
 class DataProcessing:
+    trend_line_enabled = False
     @staticmethod
-    def trend_line(state):
-        if state == 1:
-            print("Trend line")
-        elif state == 0:
-            print("No trend line:(")
+    def toggle_sth_on(sth):
+        pass
+
 
     def __init__(self, frame, stock, symbol, timeframe="1m", limit=20, update_interval=60):
         self.frame = frame
@@ -26,6 +26,8 @@ class DataProcessing:
         self.limit = limit  # Liczba świec do pobrania
         self.update_interval = update_interval  # Czas aktualizacji w sekundach
         self.today = datetime.today().strftime('%Y-%m-%d')
+
+        self.trend_line_enabled = False
 
         self.binance = ccxt.binance()
 
@@ -64,6 +66,10 @@ class DataProcessing:
             self.ax.set_title(self.symbol, color=plot_text_color)
             self.ax.grid(True, color="#262629")
             self.ax.plot(df['timestamp'], df['close'], color="#FF9900")
+
+            if self.trend_line_enabled:
+                data_analysis.trend_line(self.ax, df)
+
             self.canvas.draw()
             time.sleep(self.update_interval)
 
