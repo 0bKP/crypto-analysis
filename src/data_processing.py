@@ -13,10 +13,6 @@ plot_text_color = "#BCBCBC"
 
 class DataProcessing:
     trend_line_enabled = False
-    @staticmethod
-    def toggle_sth_on(sth):
-        pass
-
 
     def __init__(self, frame, stock, symbol, timeframe="1m", limit=20, update_interval=60):
         self.frame = frame
