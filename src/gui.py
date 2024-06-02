@@ -4,6 +4,7 @@ from tkinter import ttk
 
 bgColor = "#161618"
 logoBarColor = "#FF9900"
+tool_bar_bgColor = "#222224"
 
 
 def toggle(element, side, expand=False, fill=None, padx=0, pady=0):
@@ -28,6 +29,9 @@ class App(tk.Tk):
             print(e)
 
         self.drag_data = {"x": 0, "y": 0, "item": None}
+
+        # Images
+        self.dragndrop_img = tk.PhotoImage(file=r"..\img\drag-and-drop-icon.png")
 
         # Nav bar
         self.nav_bar = tk.Frame(background=logoBarColor, height=100)
@@ -76,11 +80,6 @@ class App(tk.Tk):
                                          command=self.enable_trend_line)
         self.trend_line.pack(side="right", padx=10, pady=10)
 
-        # # # Another frame I don't know what for yet
-        self.bottom_frame = tk.Frame(self.plot_frame, background=bgColor, width=100, height=100, highlightthickness=1,
-                                     highlightbackground="blue")
-        self.bottom_frame.pack(side="bottom", expand=True, fill="both")
-        self.bottom_frame.propagate(False)
 
         # Settings bar
         self.settings_bar = tk.Frame(self, background=bgColor, width=100, height=100, highlightbackground=logoBarColor,
@@ -170,7 +169,12 @@ class App(tk.Tk):
             sleep(10)
         """
         self.chart = data_processing.DataProcessing(self.plot_frame, stock, symbol)
-        self.tools_frame.pack()
+        self.tool_bar = tk.Frame(self.display_screen, width=400, height=475, background=tool_bar_bgColor)
+        self.tool_bar.pack(side="top", padx=10, pady=15)
+        self.tool_bar.propagate(False)
+        self.label = tk.Label(self.tool_bar, image=self.dragndrop_img, background=tool_bar_bgColor)
+        self.label.pack(expand=True, fill="both")
+
 
     def enable_trend_line(self):
         if self.cckbtn.get() == 1:
