@@ -56,6 +56,7 @@ class App(tk.Tk):
         self.canvas.configure(yscrollcommand=self.scrollbar.set)
 
         self.display_screen.bind('<Configure>', self.on_frame_configure)
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
 
         # # # Plot
         self.plot_frame = tk.Frame(self.display_screen, background=bgColor, width=100, height=100)
@@ -179,6 +180,9 @@ class App(tk.Tk):
 
     def on_frame_configure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _on_mousewheel(self, event):
+        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
 
 if __name__ == '__main__':
