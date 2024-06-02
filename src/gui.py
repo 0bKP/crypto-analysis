@@ -32,6 +32,7 @@ class App(tk.Tk):
 
         # Images
         self.dragndrop_img = tk.PhotoImage(file=r"..\img\drag-and-drop-icon.png")
+        self.chart_img = tk.PhotoImage(file=r"..\img\chart-icon.png")
 
         # Nav bar
         self.nav_bar = tk.Frame(background=logoBarColor, height=100)
@@ -39,7 +40,9 @@ class App(tk.Tk):
         self.nav_bar.pack_propagate(False)
 
         # # # Nav bar buttons
-        self.burger_button = tk.Button(self.nav_bar, width=8, text="Burger", command=self.toggle_settings_bar)
+        self.burger_button = tk.Button(self.nav_bar, width=100, image=self.chart_img, background=logoBarColor,
+                                       borderwidth=0, activebackground=logoBarColor, cursor="hand2",
+                                       command=self.toggle_settings_bar)
         self.burger_button.pack(side="left", fill="y")
 
         self.analysis_button = tk.Button(self.nav_bar, text="Analysis")
