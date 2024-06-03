@@ -1,6 +1,7 @@
 import tkinter as tk
 import data_processing
-from tkinter import ttk
+from tkinter import colorchooser, ttk
+
 
 bgColor = "#161618"
 logoBarColor = "#FF9900"
@@ -21,6 +22,8 @@ class App(tk.Tk):
         self.configure(bg=bgColor)
         # self.overrideredirect(True)
         self.resizable(False, False)
+
+        self.color = ((255, 153, 0), logoBarColor)
 
         try:
             from ctypes import windll
@@ -70,6 +73,7 @@ class App(tk.Tk):
         self.plot_frame.pack(side="left", anchor="nw")
 
         # # # Analysis tools frame
+        """
         self.tools_frame = tk.Frame(self.display_screen, background=bgColor, width=100, height=100,
                                              highlightthickness=1, highlightbackground="pink")
         self.tools_frame.propagate(False)
@@ -82,7 +86,7 @@ class App(tk.Tk):
                                          onvalue=1, offvalue=0,
                                          command=self.enable_trend_line)
         self.trend_line.pack(side="right", padx=10, pady=10)
-
+        """
 
         # Settings bar
         self.settings_bar = tk.Frame(self, background=bgColor, width=100, height=100, highlightbackground=logoBarColor,
@@ -95,7 +99,7 @@ class App(tk.Tk):
         self.stock_var.set("Binance")
         self.stock = tk.OptionMenu(self.settings_bar, self.stock_var, "Binance", "CoinMarketCap")
         self.stock.config(background=bgColor, highlightthickness=0, foreground="white", highlightcolor=bgColor,
-                          borderwidth=0)
+                          cursor="hand2", borderwidth=0, indicatoron=False)
         self.stock.pack(side="top")
 
         # Which symbol to use
@@ -104,13 +108,17 @@ class App(tk.Tk):
         self.symbol = tk.OptionMenu(self.settings_bar, self.symbol_var, "BTC/USDT", "ETH/USDT", "DOGE/USDT",
                                     "BTC/PLN")
         self.symbol.config(background=bgColor, highlightthickness=0, foreground="white", highlightcolor=bgColor,
-                           borderwidth=0)
+                           borderwidth=0, cursor="hand2", indicatoron=False)
         self.symbol.pack(side="top")
 
         self.run = tk.Button(self.settings_bar, text="Analyze!", background="#1DAF1A", foreground="white",
-                             height=5,
-                             command=self.run_analysis)
+                             height=5, cursor="hand2", command=self.run_analysis)
         self.run.pack(side="bottom", fill="x")
+
+        # Which color to use
+        self.color_button = tk.Button(self.settings_bar, text="Color", borderwidth=0, background=bgColor,
+                                      foreground="white", cursor="hand2", command=self.choose_color)
+        self.color_button.pack()
 
     """
     def create_subframes(self):
@@ -171,13 +179,12 @@ class App(tk.Tk):
             self.chart.clear_chart()
             sleep(10)
         """
-        self.chart = data_processing.DataProcessing(self.plot_frame, stock, symbol)
+        self.chart = data_processing.DataProcessing(frame=self.plot_frame, stock=stock, symbol=symbol, color=self.color[1])
         self.tool_bar = tk.Frame(self.display_screen, width=400, height=475, background=tool_bar_bgColor)
         self.tool_bar.pack(side="top", padx=10, pady=15)
         self.tool_bar.propagate(False)
         self.label = tk.Label(self.tool_bar, image=self.dragndrop_img, background=tool_bar_bgColor)
         self.label.pack(expand=True, fill="both")
-
 
     def enable_trend_line(self):
         if self.cckbtn.get() == 1:
@@ -191,6 +198,8 @@ class App(tk.Tk):
     def _on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
+    def choose_color(self):
+        self.color = tk.colorchooser.askcolor(title="Color")
 
 if __name__ == '__main__':
     app = App()
